@@ -2,12 +2,14 @@ package com.zohar.educope.controller;
 
 import com.zohar.educope.constant.ErrorConstant;
 import com.zohar.educope.dto.AdjustUserProfile;
+import com.zohar.educope.dto.ChatOverviewDto;
 import com.zohar.educope.dto.TokenResponse;
 import com.zohar.educope.dto.UserBasic;
 import com.zohar.educope.dto.UserInformation;
 import com.zohar.educope.dto.UserProfile;
 import com.zohar.educope.entity.User;
 import com.zohar.educope.service.common.UserService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +48,7 @@ public class UserController {
 
     @GetMapping("/get-profile")
     public ResponseEntity getUserProfile(@RequestParam(name = "userId") String userId) {
-        UserProfile userProfile = userService.getUserProfile(userId);
+        UserProfile userProfile = userService.getUserProfile(userId, true);
         ResponseEntity responseEntity;
         if(userProfile != null) {
             responseEntity = new ResponseEntity(userProfile, HttpStatus.OK);
@@ -88,6 +90,18 @@ public class UserController {
             responseEntity = new ResponseEntity(response, HttpStatus.OK);
         } else {
             responseEntity = new ResponseEntity(ErrorConstant.Err002, HttpStatus.BAD_REQUEST);
+        }
+        return responseEntity;
+    }
+
+    @GetMapping("/get-list-chat")
+    public ResponseEntity getListChat(@RequestParam String userId) {
+        List<ChatOverviewDto> chatOverviewDtos = userService.getListChat(userId);
+        ResponseEntity responseEntity;
+        if(chatOverviewDtos != null) {
+            responseEntity = new ResponseEntity(chatOverviewDtos, HttpStatus.OK);
+        } else {
+            responseEntity = new ResponseEntity(ErrorConstant.Err003, HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
     }

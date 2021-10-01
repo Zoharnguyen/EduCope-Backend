@@ -5,11 +5,13 @@ import com.zohar.educope.constant.CourseType;
 import com.zohar.educope.constant.ErrorConstant;
 import com.zohar.educope.constant.OfferType;
 import com.zohar.educope.dto.CourseContractWrap;
+import com.zohar.educope.dto.CourseDTO;
 import com.zohar.educope.dto.CourseStatus;
 import com.zohar.educope.dto.CourseStatusWrap;
 import com.zohar.educope.entity.Course;
 import com.zohar.educope.service.common.OfferService;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,7 +33,7 @@ public class OfferController {
   OfferService offerService;
 
   @PostMapping("/create")
-  public ResponseEntity createOffer(@RequestBody Course course) {
+  public ResponseEntity createOffer(@RequestBody CourseDTO course) {
     Course courseResponse = offerService.createOffer(course);
     ResponseEntity responseEntity;
     if (courseResponse != null) {
@@ -45,7 +47,7 @@ public class OfferController {
   @GetMapping("/get-list")
   public ResponseEntity getListOfferByType(
       @RequestParam(value = "offerType", required = true) OfferType offerType) {
-    List<Course> offersResponse = offerService.getListOfferByType(offerType);
+    List<CourseDTO> offersResponse = offerService.getListOfferByType(offerType);
     ResponseEntity responseEntity;
     if (offersResponse != null) {
       responseEntity = new ResponseEntity(offersResponse, HttpStatus.OK);
@@ -61,7 +63,7 @@ public class OfferController {
       @RequestParam(value = "subject", required = true) String subject,
       @RequestParam(value = "page", defaultValue = "0") int page,
       @RequestParam(value = "size", defaultValue = "10") int size) {
-    Set<Course> offersResponse = offerService
+    Set<CourseDTO> offersResponse = offerService
         .getListOfferByTypeAndSubject(offerType, subject, page, size);
     ResponseEntity responseEntity;
     if (!offersResponse.isEmpty()) {
@@ -75,12 +77,12 @@ public class OfferController {
   @GetMapping("/get-course-by-id")
   public ResponseEntity getCourseById(
       @RequestParam(value = "courseId", required = true) String courseId) {
-    Course offersResponse = offerService.getCourseById(courseId);
+    CourseDTO offersResponse = offerService.getCourseById(courseId);
     ResponseEntity responseEntity;
     if (offersResponse != null) {
       responseEntity = new ResponseEntity(offersResponse, HttpStatus.OK);
     } else {
-      responseEntity = new ResponseEntity(ErrorConstant.Err002, HttpStatus.BAD_REQUEST);
+      responseEntity = new ResponseEntity(ErrorConstant.Err006, HttpStatus.BAD_REQUEST);
     }
     return responseEntity;
   }
@@ -160,6 +162,32 @@ public class OfferController {
     List<Course> response = offerService.getListClassByCourseTypeAndAuthorId(courseType, authorId);
     ResponseEntity responseEntity;
     if (!CollectionUtils.isEmpty(response)) {
+      responseEntity = new ResponseEntity(response, HttpStatus.OK);
+    } else {
+      responseEntity = new ResponseEntity(ErrorConstant.Err002, HttpStatus.BAD_REQUEST);
+    }
+    return responseEntity;
+  }
+
+  // Get list class of specific User.
+  @GetMapping("/get-contract-by-course-id")
+  public ResponseEntity getContractByCourseId(@RequestParam String courseId) {
+    CourseContractWrap response = offerService.getContractByCourseId(courseId);
+    ResponseEntity responseEntity;
+    if (!Objects.isNull(response)) {
+      responseEntity = new ResponseEntity(response, HttpStatus.OK);
+    } else {
+      responseEntity = new ResponseEntity(ErrorConstant.Err002, HttpStatus.BAD_REQUEST);
+    }
+    return responseEntity;
+  }
+
+  // Update courseStatus of course
+  @PatchMapping("/update-course-contract")
+  public ResponseEntity updateCourseContract(@RequestBody CourseContractWrap courseContractWrap) {
+    CourseContractWrap response = offerService.updateCourseContract(courseContractWrap);
+    ResponseEntity responseEntity;
+    if (response != null) {
       responseEntity = new ResponseEntity(response, HttpStatus.OK);
     } else {
       responseEntity = new ResponseEntity(ErrorConstant.Err002, HttpStatus.BAD_REQUEST);

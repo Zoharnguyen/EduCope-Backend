@@ -36,8 +36,8 @@ public class Course implements Comparable<Course> {
     @Field(name = "note")
     private String note;
 
-    @Field(name = "profileAuthor")
-    private UserProfile profileAuthor;
+    @Field(name = "profileAuthorId")
+    private String profileAuthorId;
 
     @Field(name = "scheduleOffer")
     private ScheduleOffer scheduleOffer;
@@ -49,7 +49,7 @@ public class Course implements Comparable<Course> {
     private CourseType courseType;
 
     @Field(name = "courseStatus")
-    private List<CourseStatus> courseStatusList;
+    private List<CourseStatus> courseStatus;
 
     @Field(name = "courseContract")
     private List<CourseContract> courseContract;
@@ -59,6 +59,17 @@ public class Course implements Comparable<Course> {
 
     @Field(name = "memberClassList")
     private List<UserProfile> memberClassList;
+
+    @Field(name = "courseImage")
+    private String courseImage;
+
+    public String getCourseImage() {
+        return courseImage;
+    }
+
+    public void setCourseImage(String courseImage) {
+        this.courseImage = courseImage;
+    }
 
     public List<UserProfile> getMemberClassList() {
         return memberClassList;
@@ -76,12 +87,12 @@ public class Course implements Comparable<Course> {
         this.courseType = courseType;
     }
 
-    public List<CourseStatus> getCourseStatusList() {
-        return courseStatusList;
+    public List<CourseStatus> getCourseStatus() {
+        return courseStatus;
     }
 
-    public void setCourseStatusList(List<CourseStatus> courseStatusList) {
-        this.courseStatusList = courseStatusList;
+    public void setCourseStatus(List<CourseStatus> courseStatus) {
+        this.courseStatus = courseStatus;
     }
 
     public List<CourseContract> getCourseContract() {
@@ -172,12 +183,12 @@ public class Course implements Comparable<Course> {
         this.note = note;
     }
 
-    public UserProfile getProfileAuthor() {
-        return profileAuthor;
+    public String getProfileAuthorId() {
+        return profileAuthorId;
     }
 
-    public void setProfileAuthor(UserProfile profileAuthor) {
-        this.profileAuthor = profileAuthor;
+    public void setProfileAuthorId(String profileAuthorId) {
+        this.profileAuthorId = profileAuthorId;
     }
 
     public ScheduleOffer getScheduleOffer() {
@@ -190,14 +201,15 @@ public class Course implements Comparable<Course> {
 
     @Override
     public int compareTo(Course course) {
-        if (this.getProfileAuthor().getRate() == null) {
-            return 0;
-        } else if (course.getProfileAuthor().getRate() == null
-                || (this.getProfileAuthor().getRate() == null && course.getProfileAuthor().getRate() == null)) {
-            return 1;
-        } else {
-            return this.getProfileAuthor().getRate().compareTo(course.getProfileAuthor().getRate());
-        }
+//        if (this.getProfileAuthor().getRate() == null) {
+//            return 0;
+//        } else if (course.getProfileAuthor().getRate() == null
+//                || (this.getProfileAuthor().getRate() == null && course.getProfileAuthor().getRate() == null)) {
+//            return 1;
+//        } else {
+//            return this.getProfileAuthor().getRate().compareTo(course.getProfileAuthor().getRate());
+//        }
+        return 0;
     }
 
     @Override

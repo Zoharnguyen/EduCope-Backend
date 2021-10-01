@@ -4,11 +4,13 @@ import com.zohar.educope.constant.UserType;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 @Getter
 @Setter
 public class UserProfile {
 
+    @Field(name = "id")
     private String id;
 
     private String fullName;

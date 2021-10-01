@@ -21,11 +21,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // We don't need CSRF for this example
         httpSecurity.csrf().disable()
                 // Dont authenticate this particular request
-                .authorizeRequests().antMatchers("/user/login", "/swagger-ui.html", "/edu-cope/*", "/edu-cope-backend/*", "/v2/*","/webjars/springfox-swagger-ui/*").permitAll();
-//                .antMatchers("/user/create").authenticated();
+                .authorizeRequests().antMatchers("/user/login", "/user/create", "/swagger-ui.html", "/edu-cope/*", "/edu-cope-backend/*", "/v2/*","/webjars/springfox-swagger-ui/*", "/offer/get-list", "/offer/get-courses-by-type-and-subject").permitAll()
+
                 // all other requests need to be authenticated
-//                .anyRequest().authenticated();
-//                        anyRequest().authenticated().and().
+                .anyRequest().authenticated()
+                ;
+
 //                // make sure we use stateless session; session won't be used to
 //                // store user's state.
 //                        exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).and().sessionManagement()

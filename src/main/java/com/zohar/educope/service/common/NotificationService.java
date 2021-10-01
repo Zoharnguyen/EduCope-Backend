@@ -15,6 +15,7 @@ import com.zohar.educope.repository.UserRepos;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Slf4j
@@ -123,7 +125,8 @@ public class NotificationService {
         .build();
     try {
       FirebaseMessaging.getInstance().send(message);
-      notificationRequestDto.getNotificationElement().setNotificationId(UUID.randomUUID().toString());
+      notificationRequestDto.getNotificationElement()
+          .setNotificationId(UUID.randomUUID().toString());
       notificationRequestDto.getNotificationElement().setSeeStatus("false");
       notificationRequestDto.getNotificationElement()
           .setTimeCreated(new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date()));
@@ -140,8 +143,15 @@ public class NotificationService {
     List<NotificationElement> notificationElements = new ArrayList<>();
     try {
       Optional<User> userOptional = userRepos.findById(userId);
-      if (!userOptional.isPresent()) return null;
-      return userOptional.get().getNotifications();
+      if (!userOptional.isPresent()) {
+        return null;
+      }
+      List<NotificationElement> notificationElementsResponse = userOptional.get()
+          .getNotifications();
+      if (!CollectionUtils.isEmpty(notificationElementsResponse)) {
+        Collections.reverse(notificationElementsResponse);
+      }
+      return notificationElementsResponse;
     } catch (Exception e) {
       log.error("Fail to get notifications", e);
     }

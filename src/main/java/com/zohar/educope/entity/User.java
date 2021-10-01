@@ -3,6 +3,7 @@ package com.zohar.educope.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zohar.educope.constant.UserType;
 import com.zohar.educope.dto.AdjustUserProfile;
+import com.zohar.educope.dto.ChatOverview;
 import com.zohar.educope.dto.NotificationElement;
 import java.util.List;
 import org.joda.time.DateTime;
@@ -65,6 +66,33 @@ public class User {
 
     @Field(name = "notifications")
     private List<NotificationElement> notifications;
+
+    @Field(name = "chatOverviews")
+    private List<ChatOverview> chatOverviews;
+
+    public List<ChatOverview> getChatOverviews() {
+        return chatOverviews;
+    }
+
+    public void setChatOverviews(List<ChatOverview> chatOverviews) {
+        this.chatOverviews = chatOverviews;
+    }
+
+    public DateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(DateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public DateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(DateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     public List<NotificationElement> getNotifications() {
         return notifications;
