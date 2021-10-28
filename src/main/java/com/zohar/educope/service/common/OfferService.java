@@ -32,7 +32,7 @@ public interface OfferService {
 
   CourseContractWrap createCourseContract(CourseContractWrap courseContractWrap);
 
-  List<Course> getListClassByCourseTypeAndAuthorId(CourseType courseType, String userId);
+  List<CourseDTO> getListClassByCourseTypeAndAuthorId(CourseType courseType, String userId);
 
   CourseContractWrap getContractByCourseId(String courseId);
 

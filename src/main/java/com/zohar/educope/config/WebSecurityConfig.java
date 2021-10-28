@@ -21,7 +21,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // We don't need CSRF for this example
         httpSecurity.csrf().disable()
                 // Dont authenticate this particular request
-                .authorizeRequests().antMatchers("/user/login", "/user/create", "/swagger-ui.html", "/edu-cope/*", "/edu-cope-backend/*", "/v2/*","/webjars/springfox-swagger-ui/*", "/offer/get-list", "/offer/get-courses-by-type-and-subject").permitAll()
+                .authorizeRequests().antMatchers("/user/login", "/user/create", "/swagger-ui.html", "/edu-cope/*", "/edu-cope-backend/*", "/v2/*","/webjars/springfox-swagger-ui/*", "/offer/get-list", "/offer/get-courses-by-type-and-subject", "/ws-message").permitAll()
 
                 // all other requests need to be authenticated
                 .anyRequest().authenticated()

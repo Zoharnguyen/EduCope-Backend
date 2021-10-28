@@ -179,10 +179,8 @@ public class CourseDTO implements Comparable<CourseDTO> {
   @Override
   public int compareTo(CourseDTO course) {
     if (this.getProfileAuthor().getRate() == null) {
-      return 0;
-    } else if (course.getProfileAuthor().getRate() == null
-        || (this.getProfileAuthor().getRate() == null
-        && course.getProfileAuthor().getRate() == null)) {
+      return -1;
+    } else if (course.getProfileAuthor().getRate() == null) {
       return 1;
     } else {
       return this.getProfileAuthor().getRate().compareTo(course.getProfileAuthor().getRate());

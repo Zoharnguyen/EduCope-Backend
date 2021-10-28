@@ -88,7 +88,9 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public UserProfile getUserProfile(String userId, boolean firstLoop) {
-    User user = userRepos.findById(userId).get();
+    Optional<User> userOptional = userRepos.findById(userId);
+    if(!userOptional.isPresent()) return null;
+    User user = userOptional.get();
     UserProfile userProfile = convertUserToUserProfile(user);
     // Convert imageId to base64 for response
     if (Objects.nonNull(userProfile)) {

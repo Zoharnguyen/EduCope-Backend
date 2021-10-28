@@ -159,7 +159,7 @@ public class OfferController {
   @GetMapping("/get-courses-by-course-type-and-author-id")
   public ResponseEntity getListClassByCourseTypeAndAuthorId(@RequestParam CourseType courseType,
       @RequestParam String authorId) {
-    List<Course> response = offerService.getListClassByCourseTypeAndAuthorId(courseType, authorId);
+    List<CourseDTO> response = offerService.getListClassByCourseTypeAndAuthorId(courseType, authorId);
     ResponseEntity responseEntity;
     if (!CollectionUtils.isEmpty(response)) {
       responseEntity = new ResponseEntity(response, HttpStatus.OK);

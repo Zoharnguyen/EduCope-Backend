@@ -28,6 +28,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
@@ -66,21 +67,23 @@ public class OfferServiceImpl implements OfferService {
   @Override
   public Course createOffer(CourseDTO course) {
     Course courseResponse = null;
-    String idAuthor = course.getProfileAuthor().getId();
-    UserProfile userProfile = userService.getUserProfile(idAuthor, true);
-    if (userProfile != null) {
-      //Get and insert image to course.
-      if (!StringUtils.isEmpty(userProfile.getUrlImageProfile())) {
-        try {
-          LocalFile imageFile = fileService.getFileById(userProfile.getUrlImageProfile());
-          String contentImageFile = Base64.getEncoder().encodeToString(imageFile.getFile());
-          userProfile.setUrlImageProfile(contentImageFile);
-        } catch (Exception e) {
-          logger.error("Error when retrieve and insert image to course", e);
-        }
-      }
-      course.setProfileAuthor(userProfile);
-    }
+    // Don't need to get image of user right?
+//    String idAuthor = course.getProfileAuthor().getId();
+//    UserProfile userProfile = userService.getUserProfile(idAuthor, true);
+//    if (userProfile != null) {
+//      //Get and insert image to course.
+//      if (!StringUtils.isEmpty(userProfile.getUrlImageProfile())) {
+//        try {
+//          LocalFile imageFile = fileService.getFileById(userProfile.getUrlImageProfile());
+//          String contentImageFile = Base64.getEncoder().encodeToString(imageFile.getFile());
+//          userProfile.setUrlImageProfile(contentImageFile);
+//        } catch (Exception e) {
+//          logger.error("Error when retrieve and insert image to course", e);
+//        }
+//      }
+//      course.setProfileAuthor(userProfile);
+//    }
+
     // Insert random image for course.
     if (!CollectionUtils.isEmpty(randomListImageId)) {
       int index = getRandomInRange(0, randomListImageId.size());
@@ -104,7 +107,10 @@ public class OfferServiceImpl implements OfferService {
     // Convert List course to List courseDTO
     if (!CollectionUtils.isEmpty(courses)) {
       courses.stream().forEach(course -> {
-        courseDTOS.add(convertCourseToCourseDTO(course));
+        CourseDTO courseDTO = convertCourseToCourseDTO(course);
+        if (Objects.nonNull(courseDTO)) {
+          courseDTOS.add(courseDTO);
+        }
       });
     }
     Collections.sort(courseDTOS, Collections.reverseOrder());
@@ -114,8 +120,13 @@ public class OfferServiceImpl implements OfferService {
   @Override
   public Set<CourseDTO> getListOfferByTypeAndSubject(OfferType offerType, String subject, int page,
       int size) {
-    Set<CourseDTO> courseDTOS = new HashSet<>();
+    TreeSet<CourseDTO> courseDTOS = new TreeSet<>();
     Set<Course> courses = new HashSet<>();
+
+    // ToDo what this code do???
+    // ---start---
+    // This code to support for search by subject Vietnamese
+
     // Get all courses by offerType and subject with page and size
     Pageable pageable = PageRequest.of(page, size);
     List<Course> unchangeSubjectListCourses = offerRepos
@@ -138,9 +149,21 @@ public class OfferServiceImpl implements OfferService {
         courses);
     if (!CollectionUtils.isEmpty(courses)) {
       courses.stream().forEach(course -> {
-        courseDTOS.add(convertCourseToCourseDTO(course));
+        CourseDTO courseDTO = convertCourseToCourseDTO(course);
+        if (Objects.nonNull(courseDTO)) {
+          courseDTOS.add(courseDTO);
+        }
       });
     }
+
+    // ---end---
+
+    // Sort courses by rate of author
+    if(!courseDTOS.isEmpty()) {
+      TreeSet<CourseDTO> courseDTOSReverse = (TreeSet<CourseDTO>) courseDTOS.descendingSet();
+      return courseDTOSReverse;
+    }
+
     return courseDTOS;
   }
 
@@ -270,19 +293,28 @@ public class OfferServiceImpl implements OfferService {
   }
 
   @Override
-  public List<Course> getListClassByCourseTypeAndAuthorId(CourseType courseType, String authorId) {
+  public List<CourseDTO> getListClassByCourseTypeAndAuthorId(CourseType courseType, String authorId) {
     try {
       Query query = new Query();
       // Get list course of user who own this course or registered this course
       Criteria criteria = Criteria.where("courseType").is(courseType)
-          .orOperator(Criteria.where("profileAuthor.id").is(authorId),
+          .orOperator(Criteria.where("profileAuthorId").is(authorId),
               Criteria.where("courseStatus.userProfile.id").is(authorId)
           );
 
       query.addCriteria(criteria);
       List<Course> courses = mongoTemplate.find(query, Course.class);
-      if (!courses.isEmpty()) {
-        return courses;
+
+      List<CourseDTO> courseDTOS = new ArrayList<>();
+      courses.stream().forEach(course -> {
+        CourseDTO courseDTO = convertCourseToCourseDTO(course);
+        if (Objects.nonNull(courseDTO)) {
+          courseDTOS.add(courseDTO);
+        }
+      });
+
+      if (!courseDTOS.isEmpty()) {
+        return courseDTOS;
       }
     } catch (Exception e) {
       logger.error("Error when get data from mongodb " + e.getMessage());
@@ -504,6 +536,9 @@ public class OfferServiceImpl implements OfferService {
       // Add authorProfile from authorID of course to courseDTO
       if (Objects.nonNull(course.getProfileAuthorId())) {
         UserProfile userProfile = userService.getUserProfile(course.getProfileAuthorId(), true);
+        if (Objects.isNull(userProfile)) {
+          return null;
+        }
         courseDTO.setProfileAuthor(userProfile);
       }
     }
